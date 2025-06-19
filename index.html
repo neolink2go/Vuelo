@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Descarga tu Pase de Abordar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0074D9, #7FDBFF);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    input, button {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      margin: 0.5rem;
+    }
+    input {
+      width: 200px;
+    }
+    button {
+      background-color: #001f3f;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005f9f;
+    }
+    .error {
+      color: yellow;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Descarga tu Pase de Abordar ✈️</h1>
+  <input type="text" id="numeroEmpleado" placeholder="Número de empleado" />
+  <button onclick="descargarPase()">Descargar PDF</button>
+  <div id="mensaje" class="error"></div>
+
+  <script>
+    function descargarPase() {
+      const numero = document.getElementById("numeroEmpleado").value.trim();
+      const mensaje = document.getElementById("mensaje");
+      mensaje.textContent = "";
+
+      if (numero === "") {
+        mensaje.textContent = "Por favor, ingresa tu número de empleado.";
+        return;
+      }
+
+      // La URL se construye para apuntar a la carpeta 'pases'
+      // que debe contener tus PDFs con nombres como '12345.pdf'
+      const url = `pases/${numero}.pdf`;
+
+      fetch(url)
+        .then(res => {
+          if (!res.ok) {
+            // Si la respuesta no es 200 OK (ej. 404 Not Found), lanza un error
+            throw new Error(`No encontrado: ${res.status}`);
+          }
+          // Si la descarga es exitosa, crea un enlace y simula un clic
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `Pase_${numero}.pdf`; // Nombre del archivo a descargar
+          document.body.appendChild(a); // Añadir al DOM temporalmente
+          a.click(); // Simular clic
+          document.body.removeChild(a); // Eliminar del DOM
+        })
+        .catch(error => {
+          console.error("Error al descargar el pase:", error);
+          mensaje.textContent = "No se encontró tu pase. Verifica tu número.";
+        });
+    }
+  </script>
+</body>
+</html>
